@@ -12,9 +12,17 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("Inserting Records--")
         insertData()
+        print("Retriving Person Records--")
         retriveRecordsFromCoreData()
+        print("Updating record -- 1-Person to 4-Person")
         updatingPersonRecord()
+        print("Retriving Person Records--")
+        retriveRecordsFromCoreData()
+        print("Deleting Person Record --")
+        deletingPersonRecord()
+        print("Retriving Person Records--")
         retriveRecordsFromCoreData()
     }
     
@@ -71,6 +79,27 @@ class ViewController: UIViewController {
             personObjectToBeUpdated.setValue(70454.34, forKey: "salary")
         }catch{
             print("record not updated")
+        }
+    }
+    
+    func deletingPersonRecord(){
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+       let managedContext = appDelegate.persistentContainer.viewContext
+        
+        let fetchRequestForDelete = NSFetchRequest<NSFetchRequestResult>(entityName: "Person")
+        fetchRequestForDelete.predicate = NSPredicate(format: "name = %@", "4-Person")
+        do{
+            let recordToBeDeleted = try managedContext.fetch(fetchRequestForDelete)
+            let personObjToBeDeleted = recordToBeDeleted[0] as! NSManagedObject
+            managedContext.delete(personObjToBeDeleted)
+            
+            do{
+                try managedContext.save()
+            } catch {
+                print("Chages Not saved")
+            }
+        } catch{
+            print("Error deleting person record")
         }
     }
 }
